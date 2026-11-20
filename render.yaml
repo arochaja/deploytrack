@@ -1,0 +1,28 @@
+# Render Blueprint: one free web service running the full DeployTrack app in demo mode.
+# Deploy: https://render.com/deploy?repo=https://github.com/arochaja/deploytrack
+services:
+  - type: web
+    name: deploytrack
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/meta
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DEMO_MODE            # fictional data only; never real staff records on a public site
+        value: "true"
+      - key: EMAIL_MODE           # emails stay in the Outbox tab
+        value: outbox
+      - key: AI_PROVIDER
+        value: claude
+      - key: ANTHROPIC_API_KEY    # Render asks for this when you create the service
+        sync: false
+      - key: CLAUDE_MODEL
+        value: claude-opus-5-5
+      - key: AI_HOURLY_LIMIT_PER_IP
+        value: "30"
+      - key: AI_DAILY_LIMIT
+        value: "400"
